@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Hacer que el script falle si un comando falla
-set -e
-
 # Actualizar la lista de paquetes
 echo "agregando alias al sistema"
 echo 'alias cl="clear"' >> ~/.bashrc
