@@ -4,6 +4,9 @@
 set -e
 
 # Actualizar la lista de paquetes
+echo "agregando alias al sistema"
+echo 'alias cl="clear"' >> ~/.bashrc
+
 echo "Actualizando la lista de paquetes..."
 apt-get update
 
@@ -56,6 +59,7 @@ if [[ "$respuesta_logisim" == "y" || "$respuesta_logisim" == "yes" ]]; then
     wget https://github.com/logisim-evolution/logisim-evolution/releases/download/v3.7.2/logisim-evolution_3.7.2-1_amd64.deb
     echo "Instalando logisim..."
     sudo dpkg -i logisim-evolution_3.7.2-1_amd64.deb
+    echo 'alias logisim="/opt/logisim-evolution/bin/logisim-evolution"' >> ~/.bashrc
     sudo apt-get install -f -y  # Para corregir posibles dependencias faltantes
     echo "Logisim se ha instalado correctamente."
 else
