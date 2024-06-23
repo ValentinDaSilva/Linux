@@ -79,7 +79,7 @@ if [[ "$respuesta_logisimClasico" == "y" || "$respuesta_logisimClasico" == "yes"
     sudo apt-get install -f -y  # Para corregir posibles dependencias faltantes
     alias logisim="java -jar ~/.Logisim/logisim-generic-2.7.1.jar"
     echo "Logisim se ha instalado correctamente."
-    echo "La carpeta en la que se guardo fue en ~/.Logisim
+    echo "La carpeta en la que se guardo fue en ~/.Logisim"
 else
     echo "No se descargará Logisim evolution."
 fi
