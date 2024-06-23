@@ -77,6 +77,7 @@ if [[ "$respuesta_logisimClasico" == "y" || "$respuesta_logisimClasico" == "yes"
     mkdir ~/.Logisim
     wget -O ~/.Logisim/logisim-generic-2.7.1.jar https://sourceforge.net/projects/circuit/files/latest/download
     sudo apt-get install -f -y  # Para corregir posibles dependencias faltantes
+    alias logisim="java -jar ~/.Logisim/logisim-generic-2.7.1.jar"
     echo "Logisim se ha instalado correctamente."
 else
     echo "No se descargará Logisim evolution."
