@@ -47,19 +47,35 @@ else
 fi
 
 # Preguntar al usuario si desea descargar Visual Studio Code
-read -p "¿Desea descargar Logisim Evolution? [Y/N]: " respuesta_logisim
+read -p "¿Desea descargar Logisim Evolution? [Y/N]: " respuesta_logisimEvolution
 
 # Convertir la respuesta a minúsculas para manejar Y/y y N/n
-respuesta_logisim=$(echo "$respuesta_logisim" | tr '[:upper:]' '[:lower:]')
+respuesta_logisimEvolution=$(echo "$respuesta_logisimEvolution" | tr '[:upper:]' '[:lower:]')
 
 # Verificar la respuesta del usuario para Visual Studio Code
-if [[ "$respuesta_logisim" == "y" || "$respuesta_logisim" == "yes" ]]; then
+if [[ "$respuesta_logisimEvolution" == "y" || "$respuesta_logisimEvolution" == "yes" ]]; then
     echo "Descargando Logisim Evolution..."
     wget https://github.com/logisim-evolution/logisim-evolution/releases/download/v3.7.2/logisim-evolution_3.7.2-1_amd64.deb
     echo "Instalando logisim..."
     sudo dpkg -i logisim-evolution_3.7.2-1_amd64.deb
     echo 'alias logisim="/opt/logisim-evolution/bin/logisim-evolution"' >> ~/.bashrc
     source ~/.bashrc
+    sudo apt-get install -f -y  # Para corregir posibles dependencias faltantes
+    echo "Logisim se ha instalado correctamente."
+else
+    echo "No se descargará Logisim evolution."
+fi
+
+read -p "¿Desea descargar Logisim Clasico? [Y/N]: " respuesta_logisimClasico
+
+# Convertir la respuesta a minúsculas para manejar Y/y y N/n
+respuesta_logisimClasico=$(echo "$respuesta_logisimClasico" | tr '[:upper:]' '[:lower:]')
+
+# Verificar la respuesta del usuario para Visual Studio Code
+if [[ "$respuesta_logisimClasico" == "y" || "$respuesta_logisimClasico" == "yes" ]]; then
+    echo "Descargando Logisim Clasico..."
+    mkdir ~/.Logisim
+    wget -O ~/.Logisim/logisim-generic-2.7.1.jar https://sourceforge.net/projects/circuit/files/latest/download
     sudo apt-get install -f -y  # Para corregir posibles dependencias faltantes
     echo "Logisim se ha instalado correctamente."
 else
@@ -75,16 +91,8 @@ respuesta_java=$(echo "$respuesta_java" | tr '[:upper:]' '[:lower:]')
 # Verificar la respuesta del usuario para Visual Studio Code
 if [[ "$respuesta_java" == "y" || "$respuesta_java" == "yes" ]]; then
     echo "Descargando Java..."
-    wget https://download.java.net/openjdk/jdk21/ri/openjdk-21+35_linux-x64_bin.tar.gz
-    echo "Preparando para descomprimir el archivo descargado"
-    tar -xvf openjdk-21+35_linux-x64_bin.tar.gz
-    echo "Archivo descomprimido"
-    echo "Ejecutando comandos extras"
-    sudo mv jdk-21 /usr/local/
-    export JAVA_HOME=/usr/local/jdk-21
-    export PATH=$JAVA_HOME/bin:$PATH
-    source ~/.bashrc
-    java -version
+    apt-get install default-jdk
+    java --version
     sudo apt -f install
     echo "Java descargado correctamente."
 else
