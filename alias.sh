@@ -4,7 +4,7 @@ echo 'alias logisim="/opt/logisim-evolution/bin/logisim-evolution"' >> ~/.bashrc
 source ~/.bashrc
 
 
-//Mas Adelante
+#Mas Adelante
 
 # Definir variables de color
 RED='\033[0;31m'
