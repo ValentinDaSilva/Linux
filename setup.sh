@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Actualizar la lista de paquetes
-echo "agregando alias al sistema"
-echo 'alias cl="clear"' >> ~/.bashrc
+linea='alias cl="clear"'
+archivo="/home/valedasilvacatelavdc/.bashrc"
+printf "%s\n" "$linea" >> "$archivo"
 source ~/.bashrc
 
 
@@ -58,8 +58,8 @@ if [[ "$respuesta_logisimEvolution" == "y" || "$respuesta_logisimEvolution" == "
     wget https://github.com/logisim-evolution/logisim-evolution/releases/download/v3.7.2/logisim-evolution_3.7.2-1_amd64.deb
     echo "Instalando logisim..."
     sudo dpkg -i logisim-evolution_3.7.2-1_amd64.deb
-    echo 'alias logisim="/opt/logisim-evolution/bin/logisim-evolution"' >> ~/.bashrc
-    source ~/.bashrc
+    linea='alias logisim="/opt/logisim-evolution/bin/logisim-evolution"'
+    printf "%s\n" "$linea" >> "$archivo"
     sudo apt-get install -f -y  # Para corregir posibles dependencias faltantes
     echo "Logisim se ha instalado correctamente."
 else
@@ -77,7 +77,8 @@ if [[ "$respuesta_logisimClasico" == "y" || "$respuesta_logisimClasico" == "yes"
     mkdir ~/.Logisim
     wget -O ~/.Logisim/logisim-generic-2.7.1.jar https://sourceforge.net/projects/circuit/files/latest/download
     sudo apt-get install -f -y  # Para corregir posibles dependencias faltantes
-    alias logisim="java -jar ~/.Logisim/logisim-generic-2.7.1.jar"
+    linea='alias logisim="java -jar ~/.Logisim/logisim-generic-2.7.1.jar"'
+    printf "%s\n" "$linea" >> "$archivo"
     echo "Logisim se ha instalado correctamente."
     echo "La carpeta en la que se guardo fue en ~/.Logisim"
 else
