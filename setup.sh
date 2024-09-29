@@ -1,9 +1,20 @@
 #!/bin/bash
 
-linea='alias cl="clear"'
-archivo="/home/valedasilvacatelavdc/.bashrc"
-printf "%s\n" "$linea" >> "$archivo"
-source ~/.bashrc
+while true; do
+    read -p "Ingrese el nombre del usuario: " nombre_usuario
+    
+    # Verificar si el directorio del usuario existe en /home
+    if [ -d "/home/$nombre_usuario" ]; then
+        echo "El usuario '$nombre_usuario' existe."
+        break  # Salir del bucle si el usuario existe
+    else
+        echo "El usuario '$nombre_usuario' no existe en /home. Intente nuevamente."
+    fi
+done
+
+cd /home/$nombre_usuario
+echo "alias cl='clear'" >> .bashrc
+
 
 
 echo "Actualizando la lista de paquetes..."
@@ -59,7 +70,7 @@ if [[ "$respuesta_logisimEvolution" == "y" || "$respuesta_logisimEvolution" == "
     echo "Instalando logisim..."
     sudo dpkg -i logisim-evolution_3.7.2-1_amd64.deb
     linea='alias logisim="/opt/logisim-evolution/bin/logisim-evolution"'
-    printf "%s\n" "$linea" >> "$archivo"
+    echo "$linea" >> .bashrc
     sudo apt-get install -f -y  # Para corregir posibles dependencias faltantes
     echo "Logisim se ha instalado correctamente."
 else
@@ -78,7 +89,7 @@ if [[ "$respuesta_logisimClasico" == "y" || "$respuesta_logisimClasico" == "yes"
     wget -O ~/.Logisim/logisim-generic-2.7.1.jar https://sourceforge.net/projects/circuit/files/latest/download
     sudo apt-get install -f -y  # Para corregir posibles dependencias faltantes
     linea='alias logisim="java -jar ~/.Logisim/logisim-generic-2.7.1.jar"'
-    printf "%s\n" "$linea" >> "$archivo"
+    echo "$linea" >> .bashrc
     echo "Logisim se ha instalado correctamente."
     echo "La carpeta en la que se guardo fue en ~/.Logisim"
 else
