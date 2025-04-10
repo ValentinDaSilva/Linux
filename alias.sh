@@ -37,13 +37,13 @@ push() {
         1)
             echo "Ejecutando comandos para pushArquitectura..."
             # Aquí puedes añadir los comandos que quieres ejecutar para pushArquitectura
-            cd /home/valedasilvacatelavdc/Arquitectura/ && git add . && git commit -m "Commit automatico" && git push origin main
+            cd ~/Arquitectura/ && git add . && git commit -m "Commit automatico" && git push origin main
 				echo "${VERDE}Listo, push hecho para arquitectura"
             ;;
         2)
             echo "Ejecutando comandos para pushAlgoritmos..."
             # Aquí puedes añadir los comandos que quieres ejecutar para pushAlgoritmos
-            cd /home/valedasilvacatelavdc/Algoritmos-Y-Estructuras-De-Datos/ && git add . && git commit -m "Commit automatico" && git push origin main
+            cd ~/Algoritmos-Y-Estructuras-De-Datos/ && git add . && git commit -m "Commit automatico" && git push origin main
 				echo "${VERDE}Listo, push hecho para algoritmos"
             ;;
         *)
