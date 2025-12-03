@@ -1,62 +1,76 @@
 #!/bin/bash
 
 #######################################
-# 1. Función copiar()
+# 1. Preguntar si desea agregar copiar()
+#    (SE AGREGA SOLO AL USUARIO ACTUAL)
 #######################################
 
-FUNCION_COPIAR='copiar() {
+read -p "¿Desea agregar la función copiar() al usuario actual? [Y/N]: " respuesta_copiar
+respuesta_copiar=$(echo "$respuesta_copiar" | tr '[:upper:]' '[:lower:]')
+
+if [[ "$respuesta_copiar" == "y" || "$respuesta_copiar" == "yes" ]]; then
+
+    FUNCION_COPIAR='copiar() {
   "$@" | xclip -selection clipboard
 }'
 
-echo "🔍 Verificando si 'xclip' está instalado..."
+    echo "🔍 Verificando si 'xclip' está instalado..."
 
-if ! command -v xclip &> /dev/null; then
-    echo "❌ xclip no está instalado. Instalando..."
-    sudo apt update && sudo apt install -y xclip
+    if ! command -v xclip &> /dev/null; then
+        echo "❌ xclip no está instalado. Instalando..."
+        sudo apt update && sudo apt install -y xclip
+    else
+        echo "✅ xclip ya está instalado."
+    fi
+
+    agregar_funcion_si_no_existe() {
+      local archivo="$1"
+
+      if [ -f "$archivo" ]; then
+        if grep -q "copiar()" "$archivo"; then
+          echo "🟡 La función copiar() ya existe en $archivo."
+        else
+          echo "⚙️ Agregando función copiar() en $archivo..."
+          echo -e "\n# Función para copiar salida al portapapeles\n$FUNCION_COPIAR" >> "$archivo"
+        fi
+      else
+        echo "⚠️ El archivo $archivo no existe."
+      fi
+    }
+
+    # SE AGREGA AL USUARIO ACTUAL (NO AL DESTINO)
+    agregar_funcion_si_no_existe "$HOME/.bashrc"
+    agregar_funcion_si_no_existe "$HOME/.zshrc"
+
 else
-    echo "✅ xclip ya está instalado."
+    echo "❌ No se agregará copiar()."
 fi
 
-agregar_funcion_si_no_existe() {
-  local archivo="$1"
-
-  if [ -f "$archivo" ]; then
-    if grep -q "copiar()" "$archivo"; then
-      echo "🟡 La función 'copiar' ya existe en $archivo."
-    else
-      echo "⚙️ Agregando función copiar() en $archivo..."
-      echo -e "\n# Función para copiar salida al portapapeles\n$FUNCION_COPIAR" >> "$archivo"
-    fi
-  else
-    echo "⚠️ El archivo $archivo no existe."
-  fi
-}
-
-agregar_funcion_si_no_existe "$HOME/.bashrc"
-agregar_funcion_si_no_existe "$HOME/.zshrc"
 
 #######################################
-# 2. Selección del usuario en /home
+# 2. Elegir usuario de /home
 #######################################
 
 while true; do
-    read -p "Ingrese el nombre del usuario: " nombre_usuario
+    read -p "Ingrese el nombre del usuario al que quiere configurar: " nombre_usuario
     
     if [ -d "/home/$nombre_usuario" ]; then
         echo "El usuario '$nombre_usuario' existe."
         break
     else
-        echo "El usuario '$nombre_usuario' no existe en /home. Intente nuevamente."
+        echo "❌ El usuario '$nombre_usuario' no existe en /home. Intente nuevamente."
     fi
 done
 
-cd "/home/$nombre_usuario"
+TARGET_HOME="/home/$nombre_usuario"
+TARGET_BASHRC="$TARGET_HOME/.bashrc"
 
 #######################################
-# 3. Alias básicos
+# 3. Alias SOLO para ese usuario
 #######################################
 
-echo "alias cl='clear'" >> .bashrc
+echo "alias cl='clear'" >> "$TARGET_BASHRC"
+
 
 #######################################
 # 4. Actualización e instalación base
@@ -65,18 +79,17 @@ echo "alias cl='clear'" >> .bashrc
 echo "🔄 Actualizando lista de paquetes..."
 apt-get update
 
-echo "📦 Instalando paquetes básicos..."
+echo "📦 Instalando wget..."
 apt-get install -y wget
 
 #######################################
-# 5. Instalar GCC y G++
+# 5. GCC / G++
 #######################################
 
 read -p "¿Desea instalar gcc y g++? [Y/N]: " respuesta
 respuesta=$(echo "$respuesta" | tr '[:upper:]' '[:lower:]')
 
 if [[ "$respuesta" == "y" || "$respuesta" == "yes" ]]; then
-    echo "⚙️ Instalando gcc y g++..."
     apt-get install -y gcc g++
     echo "✔️ gcc y g++ instalados."
 else
@@ -84,7 +97,7 @@ else
 fi
 
 #######################################
-# 6. Instalar Visual Studio Code
+# 6. Visual Studio Code
 #######################################
 
 read -p "¿Desea descargar Visual Studio Code? [Y/N]: " respuesta_vscode
@@ -96,9 +109,9 @@ if [[ "$respuesta_vscode" == "y" || "$respuesta_vscode" == "yes" ]]; then
     echo "⚙️ Instalando VS Code..."
     sudo dpkg -i /tmp/code.deb
     sudo apt-get install -f -y
-    echo "✔️ VS Code instalado correctamente."
+    echo "✔️ VS Code instalado."
 else
-    echo "❌ No se instalará Visual Studio Code."
+    echo "❌ No se instalará VS Code."
 fi
 
 #######################################
@@ -113,15 +126,16 @@ if [[ "$respuesta_logisimEvolution" == "y" || "$respuesta_logisimEvolution" == "
     wget https://github.com/logisim-evolution/logisim-evolution/releases/download/v3.7.2/logisim-evolution_3.7.2-1_amd64.deb
     echo "⚙️ Instalando Logisim Evolution..."
     sudo dpkg -i logisim-evolution_3.7.2-1_amd64.deb
-    echo 'alias logisim="/opt/logisim-evolution/bin/logisim-evolution"' >> .bashrc
+    echo 'alias logisim="/opt/logisim-evolution/bin/logisim-evolution"' >> "$TARGET_BASHRC"
     sudo apt-get install -f -y
     echo "✔️ Logisim Evolution instalado."
 else
     echo "❌ No se instalará Logisim Evolution."
 fi
 
+
 #######################################
-# 8. Logisim Clásico
+# 8. Logisim clásico
 #######################################
 
 read -p "¿Desea descargar Logisim Clásico? [Y/N]: " respuesta_logisimClasico
@@ -129,14 +143,15 @@ respuesta_logisimClasico=$(echo "$respuesta_logisimClasico" | tr '[:upper:]' '[:
 
 if [[ "$respuesta_logisimClasico" == "y" || "$respuesta_logisimClasico" == "yes" ]]; then
     echo "⬇️ Descargando Logisim Clásico..."
-    mkdir -p ~/.Logisim
-    wget -O ~/.Logisim/logisim-generic-2.7.1.jar https://sourceforge.net/projects/circuit/files/latest/download
-    echo 'alias logisim="java -jar ~/.Logisim/logisim-generic-2.7.1.jar"' >> .bashrc
+    mkdir -p "$TARGET_HOME/.Logisim"
+    wget -O "$TARGET_HOME/.Logisim/logisim.jar" https://sourceforge.net/projects/circuit/files/latest/download
+    echo 'alias logisim="java -jar ~/.Logisim/logisim.jar"' >> "$TARGET_BASHRC"
     sudo apt-get install -f -y
-    echo "✔️ Logisim clásico instalado."
+    echo "✔️ Logisim Clásico instalado."
 else
-    echo "❌ No se instalará Logisim clásico."
+    echo "❌ No se instalará Logisim Clásico."
 fi
+
 
 #######################################
 # 9. Java
@@ -148,16 +163,15 @@ respuesta_java=$(echo "$respuesta_java" | tr '[:upper:]' '[:lower:]')
 if [[ "$respuesta_java" == "y" || "$respuesta_java" == "yes" ]]; then
     echo "⬇️ Instalando Java..."
     apt-get install -y default-jdk
-    echo "Versión instalada:"
     java --version
-    sudo apt -f install -y
-    echo "✔️ Java instalado correctamente."
+    echo "✔️ Java instalado."
 else
     echo "❌ No se instalará Java."
 fi
 
+
 #######################################
-# 10. Limpieza
+# 10. Limpieza final
 #######################################
 
 echo "🧹 Limpiando..."
