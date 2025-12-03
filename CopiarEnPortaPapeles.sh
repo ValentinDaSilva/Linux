@@ -49,15 +49,66 @@ else
 fi
 
 
+
 #######################################
-# 3. Agregar alias básicos al usuario elegido
+# 3. Preguntar si desea agregar copiarhist()
+#######################################
+
+read -p "¿Desea agregar la función copiarhist() a $nombre_usuario? [Y/N]: " resp_hist
+resp_hist=$(echo "$resp_hist" | tr '[:upper:]' '[:lower:]')
+
+if [[ "$resp_hist" == "y" || "$resp_hist" == "yes" ]]; then
+
+FUNCION_COPIARHIST='copiarhist() {
+    if [ -z "$1" ]; then
+        echo "Uso: $FUNCNAME <texto>"
+        return 1
+    fi
+
+    local filtro="$1"
+    local fn="$FUNCNAME"
+
+    ultimo=$(history \
+        | grep "$filtro" \
+        | grep -v "grep $filtro" \
+        | grep -v "history" \
+        | grep -v "$fn" \
+        | tail -n 1 \
+        | sed '\''s/^ *[0-9]* *//'\'')
+
+    if [ -z "$ultimo" ]; then
+        echo "❌ No se encontró ningún comando que contenga '\''$filtro'\''"
+        return 1
+    fi
+
+    echo -n "$ultimo" | xclip -selection clipboard
+    echo "✔ Comando copiado al portapapeles:"
+    echo "$ultimo"
+}'
+
+    if ! grep -q "copiarhist()" "$TARGET_BASHRC" 2>/dev/null; then
+        echo -e "\n# Función para copiar el último comando coincidente\n$FUNCION_COPIARHIST" >> "$TARGET_BASHRC"
+        echo "✔ copiarhist() agregada a $TARGET_BASHRC"
+    else
+        echo "🟡 copiarhist() ya existe en ese bashrc."
+    fi
+
+else
+    echo "❌ No se agregará copiarhist()."
+fi
+
+
+
+#######################################
+# 4. Agregar alias básicos al usuario elegido
 #######################################
 
 echo "alias cl='clear'" >> "$TARGET_BASHRC"
 
 
+
 #######################################
-# 4. Actualización e instalación base
+# 5. Actualización e instalación base
 #######################################
 
 echo "🔄 Actualizando paquetes..."
@@ -67,8 +118,9 @@ echo "📦 Instalando wget..."
 apt-get install -y wget
 
 
+
 #######################################
-# 5. GCC / G++
+# 6. GCC / G++
 #######################################
 
 read -p "¿Desea instalar gcc y g++? [Y/N]: " respuesta
@@ -79,8 +131,9 @@ if [[ "$respuesta" == "y" || "$respuesta" == "yes" ]]; then
 fi
 
 
+
 #######################################
-# 6. Visual Studio Code
+# 7. Visual Studio Code
 #######################################
 
 read -p "¿Desea descargar Visual Studio Code? [Y/N]: " r
@@ -94,8 +147,9 @@ if [[ "$r" == "y" || "$r" == "yes" ]]; then
 fi
 
 
+
 #######################################
-# 7. Logisim Evolution
+# 8. Logisim Evolution
 #######################################
 
 read -p "¿Desea instalar Logisim Evolution? [Y/N]: " re
@@ -110,8 +164,9 @@ if [[ "$re" == "y" || "$re" == "yes" ]]; then
 fi
 
 
+
 #######################################
-# 8. Logisim clásico
+# 9. Logisim clásico
 #######################################
 
 read -p "¿Desea descargar Logisim Clásico? [Y/N]: " rc
@@ -126,8 +181,9 @@ if [[ "$rc" == "y" || "$rc" == "yes" ]]; then
 fi
 
 
+
 #######################################
-# 9. Java
+# 10. Java
 #######################################
 
 read -p "¿Desea instalar Java? [Y/N]: " rj
@@ -138,11 +194,14 @@ if [[ "$rj" == "y" || "$rj" == "yes" ]]; then
     java --version
     echo "✔ Java instalado."
 fi
+
+
+
 #######################################
-# Instalar TREE + agregar reels() y alias ls
+# 11. Instalar TREE + agregar treels()
 #######################################
 
-read -p "¿Desea instalar 'tree' y agregar la función reels()? [Y/N]: " resp_tree
+read -p "¿Desea instalar 'tree' y agregar la función treels()? [Y/N]: " resp_tree
 resp_tree=$(echo "$resp_tree" | tr '[:upper:]' '[:lower:]')
 
 if [[ "$resp_tree" == "y" || "$resp_tree" == "yes" ]]; then
@@ -164,15 +223,13 @@ if [[ "$resp_tree" == "y" || "$resp_tree" == "yes" ]]; then
     ls "$@"
 }'
 
-    # Agregar la función reels() al bashrc del usuario elegido
     if ! grep -q "treels()" "$TARGET_BASHRC" 2>/dev/null; then
-        echo -e "\n# Función reels para tree/ls inteligente\n$FUNCION_REELS" >> "$TARGET_BASHRC"
-        echo "✔ Función reels() agregada a $TARGET_BASHRC"
+        echo -e "\n# Función treels para tree/ls inteligente\n$FUNCION_REELS" >> "$TARGET_BASHRC"
+        echo "✔ Función treels() agregada a $TARGET_BASHRC"
     else
         echo "🟡 La función treels() ya existe en ese bashrc."
     fi
 
-    # Agregar alias ls="reels"
     if ! grep -q "alias ls='treels'" "$TARGET_BASHRC" 2>/dev/null; then
         echo "alias ls='treels'" >> "$TARGET_BASHRC"
         echo "✔ Alias ls='treels' agregado."
@@ -185,8 +242,9 @@ else
 fi
 
 
+
 #######################################
-# 10. Limpieza final
+# 12. Limpieza final
 #######################################
 
 echo "🧹 Limpiando..."
