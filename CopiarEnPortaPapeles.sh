@@ -150,7 +150,7 @@ if [[ "$resp_tree" == "y" || "$resp_tree" == "yes" ]]; then
     echo "📦 Instalando tree..."
     apt-get install -y tree
 
-    FUNCION_REELS='reels() {
+    FUNCION_REELS='treels() {
     if [ $# -eq 0 ]; then
         tree -L 1
         return
@@ -165,23 +165,23 @@ if [[ "$resp_tree" == "y" || "$resp_tree" == "yes" ]]; then
 }'
 
     # Agregar la función reels() al bashrc del usuario elegido
-    if ! grep -q "reels()" "$TARGET_BASHRC" 2>/dev/null; then
+    if ! grep -q "treels()" "$TARGET_BASHRC" 2>/dev/null; then
         echo -e "\n# Función reels para tree/ls inteligente\n$FUNCION_REELS" >> "$TARGET_BASHRC"
         echo "✔ Función reels() agregada a $TARGET_BASHRC"
     else
-        echo "🟡 La función reels() ya existe en ese bashrc."
+        echo "🟡 La función treels() ya existe en ese bashrc."
     fi
 
     # Agregar alias ls="reels"
-    if ! grep -q "alias ls='reels'" "$TARGET_BASHRC" 2>/dev/null; then
-        echo "alias ls='reels'" >> "$TARGET_BASHRC"
-        echo "✔ Alias ls='reels' agregado."
+    if ! grep -q "alias ls='treels'" "$TARGET_BASHRC" 2>/dev/null; then
+        echo "alias ls='treels'" >> "$TARGET_BASHRC"
+        echo "✔ Alias ls='treels' agregado."
     else
-        echo "🟡 El alias ls='reels' ya existe."
+        echo "🟡 El alias ls='treels' ya existe."
     fi
 
 else
-    echo "❌ No se instalará tree ni se agregará reels()."
+    echo "❌ No se instalará tree ni se agregará treels()."
 fi
 
 
