@@ -138,6 +138,51 @@ if [[ "$rj" == "y" || "$rj" == "yes" ]]; then
     java --version
     echo "✔ Java instalado."
 fi
+#######################################
+# Instalar TREE + agregar reels() y alias ls
+#######################################
+
+read -p "¿Desea instalar 'tree' y agregar la función reels()? [Y/N]: " resp_tree
+resp_tree=$(echo "$resp_tree" | tr '[:upper:]' '[:lower:]')
+
+if [[ "$resp_tree" == "y" || "$resp_tree" == "yes" ]]; then
+
+    echo "📦 Instalando tree..."
+    apt-get install -y tree
+
+    FUNCION_REELS='reels() {
+    if [ $# -eq 0 ]; then
+        tree -L 1
+        return
+    fi
+
+    if [[ "$1" =~ ^[0-9]+$ ]]; then
+        tree -L "$1"
+        return
+    fi
+
+    ls "$@"
+}'
+
+    # Agregar la función reels() al bashrc del usuario elegido
+    if ! grep -q "reels()" "$TARGET_BASHRC" 2>/dev/null; then
+        echo -e "\n# Función reels para tree/ls inteligente\n$FUNCION_REELS" >> "$TARGET_BASHRC"
+        echo "✔ Función reels() agregada a $TARGET_BASHRC"
+    else
+        echo "🟡 La función reels() ya existe en ese bashrc."
+    fi
+
+    # Agregar alias ls="reels"
+    if ! grep -q "alias ls='reels'" "$TARGET_BASHRC" 2>/dev/null; then
+        echo "alias ls='reels'" >> "$TARGET_BASHRC"
+        echo "✔ Alias ls='reels' agregado."
+    else
+        echo "🟡 El alias ls='reels' ya existe."
+    fi
+
+else
+    echo "❌ No se instalará tree ni se agregará reels()."
+fi
 
 
 #######################################
