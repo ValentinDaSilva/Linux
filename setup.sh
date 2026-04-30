@@ -169,6 +169,52 @@ else
     echo "❌ No se instalará Java."
 fi
 
+#######################################
+# 11. Pharo (instalación en /opt)
+#######################################
+
+read -p "¿Desea descargar e instalar Pharo? [Y/N]: " respuesta_pharo
+respuesta_pharo=$(echo "$respuesta_pharo" | tr '[:upper:]' '[:lower:]')
+
+if [[ "$respuesta_pharo" == "y" || "$respuesta_pharo" == "yes" ]]; then
+
+    echo "⬇️ Descargando Pharo Launcher..."
+    cd /tmp || exit
+
+    wget https://files.pharo.org/get-files/launcher/pharo-launcher-linux-3.4.3-x64.tar.gz -O pharo-launcher.tar.gz
+
+    echo "📦 Descomprimiendo..."
+    tar -xvzf pharo-launcher.tar.gz
+
+    echo "📁 Moviendo a /opt..."
+    sudo rm -rf /opt/pharo-launcher
+    sudo mv pharo-launcher /opt/pharo-launcher
+
+    echo "🔗 Creando comando global..."
+    sudo ln -sf /opt/pharo-launcher/pharo-launcher-ui /usr/local/bin/pharo-ui
+
+    #######################################
+    # Alias para el usuario elegido
+    #######################################
+
+    TARGET_HOME="/home/$nombre_usuario"
+    TARGET_BASHRC="$TARGET_HOME/.bashrc"
+
+    echo "⚙️ Configurando alias 'pharo' para $nombre_usuario..."
+
+    if ! grep -q "alias pharo=" "$TARGET_BASHRC"; then
+        echo "alias pharo='pharo-ui &'" >> "$TARGET_BASHRC"
+        echo "✔️ Alias agregado."
+    else
+        echo "🟡 El alias ya existe."
+    fi
+
+    echo "✔️ Pharo instalado correctamente."
+    echo "💡 El usuario '$nombre_usuario' puede ejecutar: pharo"
+
+else
+    echo "❌ No se instalará Pharo."
+fi
 
 #######################################
 # 10. Limpieza final
