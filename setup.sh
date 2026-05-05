@@ -181,10 +181,10 @@ if [[ "$respuesta_pharo" == "y" || "$respuesta_pharo" == "yes" ]]; then
     echo "⬇️ Descargando Pharo Launcher..."
     cd /tmp || exit
 
-    wget https://files.pharo.org/get-files/launcher/pharo-launcher-linux-3.4.3-x64.tar.gz -O pharo-launcher.tar.gz
+    wget https://files.pharo.org/pharo-launcher/linux64 -O pharo-launcher.zip
 
     echo "📦 Descomprimiendo..."
-    tar -xvzf pharo-launcher.tar.gz
+    unzip -o pharo-launcher.zip
 
     echo "📁 Moviendo a /opt..."
     sudo rm -rf /opt/pharo-launcher
@@ -203,7 +203,7 @@ if [[ "$respuesta_pharo" == "y" || "$respuesta_pharo" == "yes" ]]; then
     echo "⚙️ Configurando alias 'pharo' para $nombre_usuario..."
 
     if ! grep -q "alias pharo=" "$TARGET_BASHRC"; then
-        echo "alias pharo='pharo-ui &'" >> "$TARGET_BASHRC"
+        echo "alias pharo='pharo-ui &'" | sudo tee -a "$TARGET_BASHRC" > /dev/null
         echo "✔️ Alias agregado."
     else
         echo "🟡 El alias ya existe."
@@ -215,7 +215,6 @@ if [[ "$respuesta_pharo" == "y" || "$respuesta_pharo" == "yes" ]]; then
 else
     echo "❌ No se instalará Pharo."
 fi
-
 #######################################
 # 10. Limpieza final
 #######################################
